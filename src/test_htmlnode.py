@@ -3,6 +3,7 @@ import unittest
 
 from htmlnode import HTMLNode
 from htmlnode import LeafNode
+from htmlnode import ParentNode
 
 class TestHTMLNode(unittest.TestCase):
     def test_eq(self):
@@ -32,6 +33,24 @@ class TestLeafNode(unittest.TestCase):
 
         self.assertEqual(l1.to_html(), ans1)
         self.assertEqual(l2.to_html(), ans2)
+
+
+class TestParentNode(unittest.TestCase):
+    def test_to_html(self):
+        node = ParentNode(
+            "p",
+            [
+                LeafNode("b", "Bold text"),
+                LeafNode(None, "Normal text"),
+                LeafNode("i", "italic text"),
+                LeafNode(None, "Normal text"),
+            ],
+        )
+
+        ans = "<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>"
+
+        self.assertEqual(node.to_html(), ans)
+
 
 if __name__ == "__main__":
     unittest.main()
