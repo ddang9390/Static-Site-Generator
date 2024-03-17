@@ -22,7 +22,7 @@ class Inline:
                 new_nodes.append(node)
                 continue
             new_node = []
-            text = node.text.split(delimiter)
+            text = node.text.split(delimiter)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
             if len(text) % 2 == 0:
                 raise ValueError("Invalid markdown")
             
@@ -66,12 +66,15 @@ class Inline:
 
             #go through each image
             for image in images:
+                #split text from image
                 sections = originalText.split(f"![{image[0]}]({image[1]})", 1)
                 if len(sections) != 2:
                     raise ValueError("Invalid markdown, image section not closed")
 
                 if sections[0] != "":
+                    #append the text
                     newnodes.append(TextNode(sections[0], text_type_text))
+                #append the image
                 newnodes.append(
                     TextNode(
                         image[0],
@@ -102,12 +105,15 @@ class Inline:
 
             #go through each link
             for link in links:
+                #split text from link
                 sections = originalText.split(f"[{link[0]}]({link[1]})", 1)
                 if len(sections) != 2:
                     raise ValueError("Invalid markdown")
                 
                 if sections[0] != "":
+                    #append the text
                     newnodes.append(TextNode(sections[0], text_type_text))
+                #append the link
                 newnodes.append(
                     TextNode(
                         link[0],
