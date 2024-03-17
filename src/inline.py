@@ -8,8 +8,9 @@ from textnode import (
     text_type_link,
 )
 
-class Inline:
+import re
 
+class Inline:
     def split_nodes_delimiter(old_nodes, delimiter, text_type):
         new_nodes = []
 
@@ -36,3 +37,13 @@ class Inline:
             
         return new_nodes
         
+    #take raw text and extract alt text and url of images
+    def extract_markdown_images(text):
+        matches = re.findall(r"!\[(.*?)\]\((.*?)\)", text)
+        return matches
+    
+    #extracts markdown links from images
+    def extract_markdown_links(text):
+        matches = re.findall(r"\[(.*?)\]\((.*?)\)", text)
+        print(f"Matches = {matches}")
+        return matches
