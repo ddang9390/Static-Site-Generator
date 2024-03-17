@@ -11,6 +11,7 @@ from textnode import (
 import re
 
 class Inline:
+    #takes list of old nodes and returns list of new nodes
     def split_nodes_delimiter(old_nodes, delimiter, text_type):
         new_nodes = []
 
@@ -19,7 +20,7 @@ class Inline:
                 new_nodes.append(node)
             if node.text_type != text_type_text:
                 new_nodes.append(node)
-                
+                continue
             new_node = []
             text = node.text.split(delimiter)
             if len(text) % 2 == 0:
@@ -66,7 +67,6 @@ class Inline:
             #go through each image
             for image in images:
                 sections = originalText.split(f"![{image[0]}]({image[1]})", 1)
-                print(f"Image Sections={sections}")
                 if len(sections) != 2:
                     raise ValueError("Invalid markdown, image section not closed")
 
@@ -121,3 +121,13 @@ class Inline:
                 newnodes.append(TextNode(originalText, text_type_text))
 
         return newnodes
+    
+    def text_to_textnodes(text):
+        textnodes = [TextNode(text, text_type_text)]
+        textnodes = Inline.split_nodes_delimiter(textnodes,"**", text_type_bold)
+        textnodes = Inline.split_nodes_delimiter(textnodes,"*", text_type_italic)
+        textnodes = Inline.split_nodes_delimiter(textnodes,"`", text_type_code)
+        textnodes = Inline.split_nodes_image(textnodes)
+        textnodes = Inline.split_nodes_link(textnodes)
+
+        return textnodes
