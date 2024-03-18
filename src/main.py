@@ -5,7 +5,8 @@ import os, shutil
 
 def main():
     static_to_public()
-    generate_page("content/index.md", "template.html", "public/index.html")
+    generate_page("content", "template.html", "public\index.html")
+
 
 def static_to_public():
     if os.path.exists("public"):
@@ -39,32 +40,45 @@ def extract_title(markdown):
 
 def generate_page(from_path, template_path, dest_path):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+    dir = os.listdir(from_path)
+    for f in dir:
+        if f == "index.md":
+            path = os.path.join(from_path, f)
+            from_file = open(path).read()
+            template_file = open(template_path).read()
 
-    from_file = open(from_path).read()
-    template_file = open(template_path).read()
+            html = markdown_to_html_node(from_file)
+            title = ""
+            for child in html.children:
+                if child.tag == "h1":
+                    title = child.children[0].value
+                    break
 
-    html = markdown_to_html_node(from_file)
-    title = ""
-    for child in html.children:
-        if child.tag == "h1":
-            title = child.children[0].value
-            break
+            html = html.to_html()
 
-    html = html.to_html()
+            template_file = open(template_path, "r")
+            template = template_file.read()
+            template_file.close()
 
-    template_file = open(template_path, "r")
-    template = template_file.read()
-    template_file.close()
-
-    template = template.replace("{{ Title }}", title)
-    template = template.replace("{{ Content }}", html)
+            template = template.replace("{{ Title }}", title)
+            template = template.replace("{{ Content }}", html)
 
 
 
-    dest_dir_path = os.path.dirname(dest_path)
-    if dest_dir_path != "":
-        os.makedirs(dest_dir_path, exist_ok=True)
-    to_file = open(dest_path, "w")
-    to_file.write(template)
+            dest_dir_path = os.path.dirname(dest_path)
+            if dest_dir_path != "":
+                os.makedirs(dest_dir_path, exist_ok=True)
+
+            to_file = open(dest_path, "w")
+            to_file.write(template)
+
+        elif not os.path.isfile(f):
+            path = os.path.join(from_path, f)
+            d = dest_path.split("\\")
+
+            dest = os.path.join("".join(d[0:len(d)-1]), f)
+            dest = os.path.join(dest, "index.html")
+
+            generate_page(path, template_path, dest)
 
 main()
