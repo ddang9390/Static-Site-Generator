@@ -1,6 +1,6 @@
 import unittest
 
-from markdown_converter import *
+from markdown_inline_converter import *
 
 class TestMarkdownConverter(unittest.TestCase):
     def test_split_nodes_delimiter(self):
