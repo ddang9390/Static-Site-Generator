@@ -1,3 +1,5 @@
+from htmlnode import LeafNode
+
 text_type_text = "text"
 text_type_bold = "bold"
 text_type_italic = "italic"
@@ -17,3 +19,27 @@ class textNode:
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
 
+    def text_node_to_html_node(self):
+        lNode = LeafNode(None, "")
+        if self.text_type == text_type_bold:
+            lNode.tag = "b"
+            lNode.value = self.text
+        if self.text_type == text_type_code:
+            lNode.tag = "code"
+            lNode.value = self.text
+        if self.text_type == text_type_image:
+            lNode.tag = "img"
+            lNode.value = ""
+            lNode.props = {"src":self.url, "alt":self.text}
+        if self.text_type == text_type_italic:
+            lNode.tag = "i"
+            lNode.value = self.text
+        if self.text_type == text_type_link:
+            lNode.tag = "a"
+            lNode.value = self.text
+            lNode.props = {"href":self.url}
+        if self.text_type == text_type_text:
+            lNode.tag = None
+            lNode.value = self.text
+
+        return lNode
