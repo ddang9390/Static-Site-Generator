@@ -33,9 +33,29 @@ class LeafNode(HTMLNode):
 
     def to_html(self):
         if self.value == None:
-            raise ValueError
+            raise ValueError("Requires value for body")
         
         if self.tag == None:
             return self.value
 
         return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
+    
+
+class ParentNode(HTMLNode):
+    def __init__(self, tag, children, props=None):
+        super().__init__(tag, None, children, props)
+
+    def to_html(self):
+        if self.tag == None:
+            raise ValueError("Requires html tag")
+        if len(self.children) == 0:
+            raise ValueError("Require lead nodes")
+        
+        str = f"<{self.tag}{self.props_to_html()}>"
+
+        for leafNode in self.children:
+            str += leafNode.to_html()
+
+        str += f"</{self.tag}>"
+        
+        return str

@@ -24,3 +24,6 @@ A type of HTMLNode that represents a single HTML tag with no children
 
 Example:
 <p>This is a paragraph</p>
+
+ParentNode:
+Handles the nesting of HTML nodes inside of one another. Any HTML node that is not a leaf node is a parent node
