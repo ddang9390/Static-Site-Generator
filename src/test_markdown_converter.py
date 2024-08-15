@@ -29,6 +29,19 @@ class TestMarkdownConverter(unittest.TestCase):
 
         self.assertEqual(new_nodes, res)
 
+    def test_extract_images(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        res = extract_markdown_images(text)
+        ans = [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")]
+
+        self.assertEqual(res, ans)
+
+    def test_extract_links(self):
+        text = "This is text with a link [to site](https://www.site.com) and [to youtube](https://www.youtube.com/)"
+        res = extract_markdown_links(text)
+        ans = [("to site", "https://www.site.com"), ("to youtube", "https://www.youtube.com/")]
+
+        self.assertEqual(res, ans)
 
 if __name__ == "__main__":
     unittest.main()
