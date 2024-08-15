@@ -38,11 +38,15 @@ def extract_markdown_images(text):
 def extract_markdown_links(text):
     return re.findall(linkRegex, text)
 
-
+# Split text from images, forming textnodes for them
 def split_nodes_image(old_nodes):
     result = []
     for node in old_nodes:
         if node.text != "":
+            if node.text_type != text_type_text:
+                result.append(node)
+                continue
+
             images = extract_markdown_images(node.text)
             if len(images) == 0:
                 result.append(node)
@@ -61,14 +65,20 @@ def split_nodes_image(old_nodes):
                     result.append(node)
 
                     text = "".join(lst.pop(-1))
+                if text != "":
+                    result.append(textNode(text=text, text_type=text_type_text))
 
     return result
 
-
+# Split text from links, forming textnodes for them
 def split_nodes_link(old_nodes):
     result = []
     for node in old_nodes:
         if node.text != "":
+            if node.text_type != text_type_text:
+                result.append(node)
+                continue
+
             images = extract_markdown_links(node.text)
             if len(images) == 0:
                 result.append(node)
@@ -87,5 +97,20 @@ def split_nodes_link(old_nodes):
                     result.append(node)
 
                     text = "".join(lst.pop(-1))
+                if text != "":
+                    result.append(textNode(text=text, text_type=text_type_text))
                    
+    return result
+
+# Use all split functions to convert text to text nodes
+def text_to_textnodes(text):
+    old_nodes = [textNode(text=text, text_type=text_type_text)]
+
+    result = split_nodes_delimiter(old_nodes, "`", text_type_code)
+    result = split_nodes_delimiter(result, "**", text_type_bold)
+    result = split_nodes_delimiter(result, "*", text_type_italic)
+    result = split_nodes_link(result)
+    result = split_nodes_image(result)
+
+    print(result)
     return result

@@ -84,7 +84,24 @@ class TestMarkdownConverter(unittest.TestCase):
 
         self.assertEqual(new_nodes, ans)
 
-    
+    def test_text_to_textnodes(self):
+        text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+
+        ans = [
+            textNode("This is ", text_type_text),
+            textNode("text", text_type_bold),
+            textNode(" with an ", text_type_text),
+            textNode("italic", text_type_italic),
+            textNode(" word and a ", text_type_text),
+            textNode("code block", text_type_code),
+            textNode(" and an ", text_type_text),
+            textNode("obi wan image", text_type_image, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            textNode(" and a ", text_type_text),
+            textNode("link", text_type_link, "https://boot.dev"),
+        ]
+
+        res = text_to_textnodes(text)
+        self.assertEqual(res, ans)
 
 if __name__ == "__main__":
     unittest.main()
