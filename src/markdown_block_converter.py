@@ -35,7 +35,13 @@ def block_to_block(markdown):
     if str[0].startswith("```") and str[-1].endswith("```"):
         return block_type_code
     
+    # Check for blockquote
     if str[0].startswith(">"):
+        lines = ''.join(str).split("\n")
+
+        for line in lines:
+            if not line.startswith(">"):
+                return block_type_paragraph
         return block_type_quote
     
     # Check for unordered list
@@ -60,13 +66,13 @@ def block_to_block(markdown):
     
 
 def markdown_to_html_node(markdown):
+    markdown = markdown.lstrip()
     blocks = markdown_to_blocks(markdown)
     pNodeChildren = []
     pNode = ParentNode(tag="div", children=[])
 
     for block in blocks:
         type = block_to_block(block)
-
         lst = block.split()
         if type == block_type_heading:
             num = len(lst[0])
@@ -83,9 +89,19 @@ def markdown_to_html_node(markdown):
             pNodeChildren.append(lNode)
 
         if type == block_type_quote:
-            lst[0] = lst[0][1:]
-            lNode = LeafNode(tag=f"blockquote", value=" ".join(lst))
+            lst = block.split("\n")
+
+            lNode = LeafNode(tag=f"blockquote", value="")
+            index = 0
+            for line in lst:
+
+                if index != 0:
+                    lNode.value += line[1:]
+                else:
+                    lNode.value += line[2:]
+                index += 1
             pNodeChildren.append(lNode)
+
 
         if type == block_type_ulist:
             listNode = ParentNode(tag="ul", children=[])

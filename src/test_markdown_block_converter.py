@@ -92,7 +92,7 @@ class TestMarkdownBlockConverter(unittest.TestCase):
         self.assertEqual(res, ans)
 
     def test_paragraph_and_quote_to_html_node(self):
-        block6 = "This is a paragraph\n\nThis is a paragraph\n\nThis is a paragraph\n\n>This is a quote"
+        block6 = "This is a paragraph\n\nThis is a paragraph\n\nThis is a paragraph\n\n> This is a quote"
 
         res = markdown_to_html_node(block6)
         
@@ -131,6 +131,16 @@ class TestMarkdownBlockConverter(unittest.TestCase):
 
         ans = ParentNode(tag="div", children=[listNode])
         self.assertEqual(res, ans)
+
+    def test_blockquote(self):
+        md = "\n> This is a\n> blockquote block\n\nthis is paragraph text\n"
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><blockquote>This is a blockquote block</blockquote><p>this is paragraph text</p></div>",
+        )
                          
+
 if __name__ == "__main__":
     unittest.main()
