@@ -47,7 +47,7 @@ class ParentNode(HTMLNode):
         if self.tag == None:
             raise ValueError("Requires html tag")
         if len(self.children) == 0:
-            raise ValueError("Require lead nodes")
+            raise ValueError("Require leaf nodes")
         
         str = f"<{self.tag}{self.props_to_html()}>"
 

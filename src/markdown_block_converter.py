@@ -78,23 +78,24 @@ def markdown_to_html_node(markdown):
         if type == block_type_heading:
             num = len(lst[0])
             val = " ".join(lst[1:])
-            children = text_to_children(val, f"h{num}")
-
-            pNodeChildren.extend(children)
-
- 
+            children = text_to_children(val)
+            
+            lNode = leaf_node_maker(children, f"h{num}")
+            pNodeChildren.append(lNode)
 
         if type == block_type_code:
             val = " ".join(lst)
-            children = text_to_children(val, "code")
+            children = text_to_children(val)
 
-            pNodeChildren.extend(children)
+            lNode = leaf_node_maker(children, "code")
+            pNodeChildren.append(lNode)
 
         if type == block_type_paragraph:
             val = " ".join(lst)
-            children = text_to_children(val, "p")
+            children = text_to_children(val)
 
-            pNodeChildren.extend(children)
+            lNode = leaf_node_maker(children, "p")
+            pNodeChildren.append(lNode)
 
         if type == block_type_quote:
             lst = block.split("\n")
@@ -108,17 +109,19 @@ def markdown_to_html_node(markdown):
                 else:
                     val += line[2:]
                 index += 1
-            children = text_to_children(val, "blockquote") 
-            pNodeChildren.extend(children)
+            children = text_to_children(val) 
+            lNode = leaf_node_maker(children, "blockquote")
+            pNodeChildren.append(lNode)
 
 
         if type == block_type_ulist:
             listNode = ParentNode(tag="ul", children=[])
             for line in block.split("\n"):
                 val = line[2:]
-                children = text_to_children(val, "li")
+                children = text_to_children(val)
 
-                listNode.children.extend(children)
+                lNode = leaf_node_maker(children, "li")
+                pNodeChildren.append(lNode)
 
             pNodeChildren.append(listNode)
 
@@ -126,9 +129,10 @@ def markdown_to_html_node(markdown):
             listNode = ParentNode(tag="ol", children=[])
             for line in block.split("\n"):
                 val = line[3:]
-                children = text_to_children(val, "li")
+                children = text_to_children(val)
 
-                listNode.children.extend(children)
+                lNode = leaf_node_maker(children, "li")
+                pNodeChildren.append(lNode)
 
             pNodeChildren.append(listNode)
 
@@ -136,15 +140,21 @@ def markdown_to_html_node(markdown):
     return pNode
 
 
-def text_to_children(text, tag):
+def text_to_children(text):
     tNodes = text_to_textnodes(text)
     children = []
 
     for tNode in tNodes:
-        print(tNode)
         node = tNode.text_node_to_html_node()
-        #node.tag = tag
         children.append(node)
 
-    print(children)
     return children
+
+def leaf_node_maker(children, tag):
+    lNodeValue = ""
+    for child in children:
+        lNodeValue += child.value
+
+    lNode = LeafNode(tag=tag, value=lNodeValue)
+
+    return lNode
