@@ -1,6 +1,20 @@
-import shutil, os
+import shutil, os, pathlib
 
 from markdown_block_converter import *
+
+def static_to_public(source, dest):
+    if not os.path.isfile(source):
+        if os.path.exists(dest):
+            for p in os.listdir(source):
+                if os.path.isfile(p):
+                    shutil.copy(p, dest)
+                else:
+                    static_to_public(os.path.join(source, p), os.path.join(dest, p))
+        else:
+            os.mkdir(dest)
+            static_to_public(source, dest)
+    else:
+        shutil.copy(source, dest)
 
 def extract_title(markdown):
     blocks = markdown_to_blocks(markdown)
@@ -43,3 +57,13 @@ def generate_page(from_path, template_path, dest_path):
     htmlFile.write(templateFile)
 
     
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    for file in os.listdir(dir_path_content):
+        from_path = os.path.join(dir_path_content, file)
+        dest_path = os.path.join(dest_dir_path, file)
+
+        if os.path.isfile(from_path):
+            dest_path = pathlib.Path(dest_path).with_suffix(".html")
+            generate_page(from_path, template_path, dest_path)
+        else:
+            generate_pages_recursive(from_path, template_path, dest_path)
