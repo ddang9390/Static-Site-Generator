@@ -1,5 +1,7 @@
 import re
 
+from htmlnode import *
+
 # Types of blocks
 block_type_paragraph = "paragraph"
 block_type_heading = "heading"
@@ -56,3 +58,50 @@ def block_to_block(markdown):
     
     return block_type_paragraph
     
+
+def markdown_to_html_node(markdown):
+    blocks = markdown_to_blocks(markdown)
+    pNodeChildren = []
+    pNode = ParentNode(tag="div", children=[])
+
+    for block in blocks:
+        type = block_to_block(block)
+
+        lst = block.split()
+        if type == block_type_heading:
+            num = len(lst[0])
+            lNode = LeafNode(tag=f"h{num}", value=" ".join(lst[1:]))
+            pNodeChildren.append(lNode)
+
+        if type == block_type_code:
+            lNode1 = LeafNode(tag="code", value=" ".join(lst))
+            p = LeafNode(tag="pre", children=[lNode1])
+            pNodeChildren.append(p)
+
+        if type == block_type_paragraph:
+            lNode = LeafNode(tag=f"p", value=" ".join(lst))
+            pNodeChildren.append(lNode)
+
+        if type == block_type_quote:
+            lst[0] = lst[0][1:]
+            lNode = LeafNode(tag=f"blockquote", value=" ".join(lst))
+            pNodeChildren.append(lNode)
+
+        if type == block_type_ulist:
+            listNode = ParentNode(tag="ul", children=[])
+            for line in block.split("\n"):
+                lNode = LeafNode(tag="li", value=line[2:])
+                listNode.children.append(lNode)
+
+            pNodeChildren.append(listNode)
+
+        if type == block_type_olist:
+            listNode = ParentNode(tag="ol", children=[])
+            for line in block.split("\n"):
+                lNode = LeafNode(tag="li", value=line[3:])
+                listNode.children.append(lNode)
+
+            pNodeChildren.append(listNode)
+
+    pNode.children = pNodeChildren
+    return pNode
