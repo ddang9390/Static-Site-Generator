@@ -1,6 +1,7 @@
 import re
 
 from htmlnode import *
+from markdown_inline_converter import text_to_textnodes
 
 # Types of blocks
 block_type_paragraph = "paragraph"
@@ -76,48 +77,74 @@ def markdown_to_html_node(markdown):
         lst = block.split()
         if type == block_type_heading:
             num = len(lst[0])
-            lNode = LeafNode(tag=f"h{num}", value=" ".join(lst[1:]))
-            pNodeChildren.append(lNode)
+            val = " ".join(lst[1:])
+            children = text_to_children(val, f"h{num}")
+
+            pNodeChildren.extend(children)
+
+ 
 
         if type == block_type_code:
-            lNode1 = LeafNode(tag="code", value=" ".join(lst))
-            p = LeafNode(tag="pre", children=[lNode1])
-            pNodeChildren.append(p)
+            val = " ".join(lst)
+            children = text_to_children(val, "code")
+
+            pNodeChildren.extend(children)
 
         if type == block_type_paragraph:
-            lNode = LeafNode(tag=f"p", value=" ".join(lst))
-            pNodeChildren.append(lNode)
+            val = " ".join(lst)
+            children = text_to_children(val, "p")
+
+            pNodeChildren.extend(children)
 
         if type == block_type_quote:
             lst = block.split("\n")
 
-            lNode = LeafNode(tag=f"blockquote", value="")
+            val = ""
+
             index = 0
             for line in lst:
-
                 if index != 0:
-                    lNode.value += line[1:]
+                    val += line[1:]
                 else:
-                    lNode.value += line[2:]
+                    val += line[2:]
                 index += 1
-            pNodeChildren.append(lNode)
+            children = text_to_children(val, "blockquote") 
+            pNodeChildren.extend(children)
 
 
         if type == block_type_ulist:
             listNode = ParentNode(tag="ul", children=[])
             for line in block.split("\n"):
-                lNode = LeafNode(tag="li", value=line[2:])
-                listNode.children.append(lNode)
+                val = line[2:]
+                children = text_to_children(val, "li")
+
+                listNode.children.extend(children)
 
             pNodeChildren.append(listNode)
 
         if type == block_type_olist:
             listNode = ParentNode(tag="ol", children=[])
             for line in block.split("\n"):
-                lNode = LeafNode(tag="li", value=line[3:])
-                listNode.children.append(lNode)
+                val = line[3:]
+                children = text_to_children(val, "li")
+
+                listNode.children.extend(children)
 
             pNodeChildren.append(listNode)
 
     pNode.children = pNodeChildren
     return pNode
+
+
+def text_to_children(text, tag):
+    tNodes = text_to_textnodes(text)
+    children = []
+
+    for tNode in tNodes:
+        print(tNode)
+        node = tNode.text_node_to_html_node()
+        #node.tag = tag
+        children.append(node)
+
+    print(children)
+    return children

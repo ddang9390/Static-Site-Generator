@@ -1,15 +1,14 @@
 import os, shutil
-from textnode import textNode
+from html_generator import *
 
 def main():
     print("Hello world")
-    tNode = textNode("This is a text node", "bold", "https://test.com")
-    str = tNode.__repr__()
-    print(str)
 
     shutil.rmtree("public")
     os.mkdir("public")
-    static_to_public("static", "public")
+    static_to_public("./static", "./public")
+
+    generate_page("./content/index.md", "./template.html", "./public/index.html")
 
 def static_to_public(source, dest):
     if not os.path.isfile(source):
