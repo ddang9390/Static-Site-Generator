@@ -81,55 +81,31 @@ class TestMarkdownBlockConverter(unittest.TestCase):
 
     def test_heading_to_html_node(self):
         block6 = "###### This is a heading\n\n### This is a heading\n\n# This is a heading"
-
-        res = markdown_to_html_node(block6)
+        res = markdown_to_html_node(block6).to_html()
         
-        lNode1 = LeafNode(tag="h6", value="This is a heading")
-        lNode2 = LeafNode(tag="h3", value="This is a heading")
-        lNode3 = LeafNode(tag="h1", value="This is a heading")
-        ans = ParentNode(tag="div", children=[lNode1, lNode2, lNode3])
+        ans = "<div><h6>This is a heading</h6><h3>This is a heading</h3><h1>This is a heading</h1></div>"
 
         self.assertEqual(res, ans)
 
     def test_paragraph_and_quote_to_html_node(self):
         block6 = "This is a paragraph\n\nThis is a paragraph\n\nThis is a paragraph\n\n> This is a quote"
-
-        res = markdown_to_html_node(block6)
+        res = markdown_to_html_node(block6).to_html()
         
-        lNode1 = LeafNode(tag="p", value="This is a paragraph")
-        lNode2 = LeafNode(tag="p", value="This is a paragraph")
-        lNode3 = LeafNode(tag="p", value="This is a paragraph")
-        lNode4 = LeafNode(tag="blockquote", value="This is a quote")
-        ans = ParentNode(tag="div", children=[lNode1, lNode2, lNode3, lNode4])
-        
+        ans = "<div><p>This is a paragraph</p><p>This is a paragraph</p><p>This is a paragraph</p><blockquote>This is a quote</blockquote></div>"
         self.assertEqual(res, ans)
 
     def test_ulist_to_html_node(self):
         block = "* This is the first list item in a list block\n* This is a list item\n* This is another list item"
+        res = markdown_to_html_node(block).to_html()
 
-        res = markdown_to_html_node(block)
-
-        lNode1 = LeafNode(tag="li", value="This is the first list item in a list block")
-        lNode2 = LeafNode(tag="li", value="This is a list item")
-        lNode3 = LeafNode(tag="li", value="This is another list item")
-
-        listNode = ParentNode(tag="ul", children=[lNode1, lNode2, lNode3])
-
-        ans = ParentNode(tag="div", children=[listNode])
+        ans = "<div><ul><li>This is the first list item in a list block</li><li>This is a list item</li><li>This is another list item</li></ul></div>"
         self.assertEqual(res, ans)
 
     def test_olist_to_html_node(self):
         block = "1. This is the first list item in a list block\n2. This is a list item\n3. This is another list item"
+        res = markdown_to_html_node(block).to_html()
 
-        res = markdown_to_html_node(block)
-
-        lNode1 = LeafNode(tag="li", value="This is the first list item in a list block")
-        lNode2 = LeafNode(tag="li", value="This is a list item")
-        lNode3 = LeafNode(tag="li", value="This is another list item")
-
-        listNode = ParentNode(tag="ol", children=[lNode1, lNode2, lNode3])
-
-        ans = ParentNode(tag="div", children=[listNode])
+        ans = "<div><ol><li>This is the first list item in a list block</li><li>This is a list item</li><li>This is another list item</li></ol></div>"
         self.assertEqual(res, ans)
 
     def test_blockquote(self):

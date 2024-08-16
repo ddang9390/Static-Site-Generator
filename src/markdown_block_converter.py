@@ -79,22 +79,23 @@ def markdown_to_html_node(markdown):
             num = len(lst[0])
             val = " ".join(lst[1:])
             children = text_to_children(val)
+            for child in children:
+                child.tag = f"h{num}"
             
-            lNode = leaf_node_maker(children, f"h{num}")
-            pNodeChildren.append(lNode)
+            pNodeChildren.extend(children)
 
         if type == block_type_code:
             val = " ".join(lst)
             children = text_to_children(val)
 
-            lNode = leaf_node_maker(children, "code")
+            lNode = p_node_maker(children, "code")
             pNodeChildren.append(lNode)
 
         if type == block_type_paragraph:
             val = " ".join(lst)
             children = text_to_children(val)
 
-            lNode = leaf_node_maker(children, "p")
+            lNode = p_node_maker(children, "p")
             pNodeChildren.append(lNode)
 
         if type == block_type_quote:
@@ -110,7 +111,7 @@ def markdown_to_html_node(markdown):
                     val += line[2:]
                 index += 1
             children = text_to_children(val) 
-            lNode = leaf_node_maker(children, "blockquote")
+            lNode = p_node_maker(children, "blockquote")
             pNodeChildren.append(lNode)
 
 
@@ -120,8 +121,9 @@ def markdown_to_html_node(markdown):
                 val = line[2:]
                 children = text_to_children(val)
 
-                lNode = leaf_node_maker(children, "li")
-                pNodeChildren.append(lNode)
+                # lNode = p_node_maker(children, "ul")
+                # pNodeChildren.append(lNode)
+                listNode.children.append(ParentNode("li", children))
 
             pNodeChildren.append(listNode)
 
@@ -131,8 +133,9 @@ def markdown_to_html_node(markdown):
                 val = line[3:]
                 children = text_to_children(val)
 
-                lNode = leaf_node_maker(children, "li")
-                pNodeChildren.append(lNode)
+                #lNode = p_node_maker(children, "ol")
+                #pNodeChildren.append(lNode)
+                listNode.children.append(ParentNode("li", children))
 
             pNodeChildren.append(listNode)
 
@@ -150,11 +153,11 @@ def text_to_children(text):
 
     return children
 
-def leaf_node_maker(children, tag):
-    lNodeValue = ""
-    for child in children:
-        lNodeValue += child.value
+def p_node_maker(children, tag):
+    if tag == "ul" or tag == "ol":
+        for child in children:
+            child.tag = "li"
+    pNode = ParentNode(tag=tag, children=children)
 
-    lNode = LeafNode(tag=tag, value=lNodeValue)
+    return pNode
 
-    return lNode
